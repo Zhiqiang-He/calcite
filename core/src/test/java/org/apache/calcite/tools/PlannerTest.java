@@ -1052,7 +1052,7 @@ public class PlannerTest {
         SqlValidatorScope scope, SqlCall call) {
       // Check for COUNT(*) function.  If it is we don't
       // want to try and derive the "*"
-      if (call.isCountStar()) {
+      if (call.isCountStar() || call.isCountStar(scope)) {
         return validator.getTypeFactory().createSqlType(SqlTypeName.BIGINT);
       }
       return super.deriveType(validator, scope, call);

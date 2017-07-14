@@ -19,6 +19,7 @@ package org.apache.calcite.sql;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.parser.SqlParserPos;
 import org.apache.calcite.sql.util.SqlVisitor;
+import org.apache.calcite.sql.validate.MatchRecognizeScope;
 import org.apache.calcite.sql.validate.SqlMoniker;
 import org.apache.calcite.sql.validate.SqlMonotonicity;
 import org.apache.calcite.sql.validate.SqlValidator;
@@ -196,6 +197,26 @@ public abstract class SqlCall extends SqlNode {
       }
     }
 
+    return false;
+  }
+
+  //Check for count(A.*) function in Match_Recognize
+  public boolean isCountStar(SqlValidatorScope scope) {
+    if (scope == null) {
+      return false;
+    }
+
+    if (scope instanceof MatchRecognizeScope) {
+      if (getOperator().isName("COUNT") && operandCount() == 1) {
+        final SqlNode param = operand(0);
+        if (param instanceof  SqlIdentifier) {
+          SqlIdentifier id = (SqlIdentifier) param;
+          if (id.isStar()) {
+            return true;
+          }
+        }
+      }
+    }
     return false;
   }
 

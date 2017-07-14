@@ -144,7 +144,6 @@ import org.apache.calcite.sql.validate.AggregatingSelectScope;
 import org.apache.calcite.sql.validate.CollectNamespace;
 import org.apache.calcite.sql.validate.DelegatingScope;
 import org.apache.calcite.sql.validate.ListScope;
-import org.apache.calcite.sql.validate.MatchRecognizeScope;
 import org.apache.calcite.sql.validate.ParameterScope;
 import org.apache.calcite.sql.validate.SelectScope;
 import org.apache.calcite.sql.validate.SqlMonotonicity;
@@ -2652,7 +2651,7 @@ public class SqlToRelConverter {
     SqlNodeList selectList = select.getSelectList();
     SqlNode having = select.getHaving();
 
-    final AggConverter aggConverter = new AggConverter(bb, select);
+    final AggConverter  aggConverter = new AggConverter(bb, select);
     createAggImpl(
         bb,
         aggConverter,
@@ -3539,11 +3538,7 @@ public class SqlToRelConverter {
         e = rexBuilder.makeFieldAccess(e, i);
       } else {
         final boolean caseSensitive = true; // name already fully-qualified
-        if (identifier.isStar() && bb.scope instanceof MatchRecognizeScope) {
-          e = rexBuilder.makeFieldAccess(e, 0);
-        } else {
-          e = rexBuilder.makeFieldAccess(e, name, caseSensitive);
-        }
+        e = rexBuilder.makeFieldAccess(e, name, caseSensitive);
       }
     }
     if (e instanceof RexInputRef) {
